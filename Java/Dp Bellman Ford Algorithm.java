@@ -1,8 +1,10 @@
 import java.util.*;
 
-class BellmanFord { static class Edge { int src, dest, weight;
+class BellmanFord { 
+     static class Edge { 
+          int src, dest, weight;
 
-Edge(int s, int d, int w) {
+  Edge(int s, int d, int w) {
         src = s;
         dest = d;
         weight = w;
