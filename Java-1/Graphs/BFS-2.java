@@ -1,6 +1,6 @@
 import java.util.Scanner;
 
-public class GraphSimple2 {
+public class GraphSimpleBFS {
     static int[][] adj = new int[100][100];
     static int[] visited = new int[100];
     static int[] parent = new int[100];
@@ -53,28 +53,38 @@ public class GraphSimple2 {
         System.out.println();
     }
 
-    public static boolean dfsCycle(int node, int par) {
-        visited[node] = 1;
-        for (int i = 0; i < v; i++) {
-            if (adj[node][i] == 1) {
-                if (visited[i] == 0) {
-                    if (dfsCycle(i, node))
-                        return true;
-                } else if (i != par)
-                    return true;
+    public static boolean bfsCycle(int start) {
+        int[] queue = new int[100];
+        int front = 0, rear = 0;
+        visited[start] = 1;
+        parent[start] = -1;
+        queue[rear++] = start;
+
+        while (front < rear) {
+            int node = queue[front++];
+            for (int i = 0; i < v; i++) {
+                if (adj[node][i] == 1) {
+                    if (visited[i] == 0) {
+                        visited[i] = 1;
+                        parent[i] = node;
+                        queue[rear++] = i;
+                    } else if (i != parent[node]) {
+                        return true; // Found a back edge => cycle
+                    }
+                }
             }
         }
         return false;
     }
 
-    public static int countConnected() {
-        int count = 0;
+    public static int countConnectedBFS() {
         for (int i = 0; i < v; i++)
             visited[i] = 0;
 
+        int count = 0;
         for (int i = 0; i < v; i++) {
             if (visited[i] == 0) {
-                dfsCycle(i, -1);
+                bfs(i); // Just mark all reachable nodes from i
                 count++;
             }
         }
@@ -109,13 +119,13 @@ public class GraphSimple2 {
 
         if (isUndirected == 1) {
             for (int i = 0; i < v; i++) visited[i] = 0;
-            if (dfsCycle(src, -1))
-                System.out.println("Cycle is present");
+            if (bfsCycle(src))
+                System.out.println("Cycle is present (using BFS)");
             else
-                System.out.println("No cycle found");
+                System.out.println("No cycle found (using BFS)");
 
-            int comp = countConnected();
-            System.out.println("Number of connected components: " + comp);
+            int comp = countConnectedBFS();
+            System.out.println("Number of connected components (BFS): " + comp);
         } else {
             System.out.println("Cycle detection and component count is only for undirected graphs.");
         }
